@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<link rel="stylesheet" type="text/css" href="stylesheet.css">-->
+    <style>
+      body
+      {
+        font-family: sans-serif;
+        background-color: #FFFFFF;
+      }
+
+      #header
+      {
+        top: 0;
+        left: 0;
+
+        padding: 25px;
+
+        font-size: 50px;
+        font-weight: bold;
+
+        color: #FFFFFF;
+        background-color: #1DB954;
+      }
+
+      #header img
+      {
+        /* The logo and the icon’s exclusion zone is equal to half the height of the icon */
+        margin-left: 25px;
+        height: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="header">
+      Minigames for <img src="Spotify_Logo_RGB_White.png" alt="Spotify"/>
+    </div>
+
+    <div id="body">
+      <p></p>
+    </div>
+
+    <div id="footer">
+
+    </div>
+  </body>
+  <script>
+    if (localStorage.getItem("token") == null)
+    {
+      window.location.replace(
+        "https://accounts.spotify.com/authorize" +
+        "?client_id=21f9d0d03aa647f8a0ebc10222f9617d" +
+        "&redirect_uri=https://stijndotexe.github.io/Minigames-for-Spotify/authorize.html" +
+        "&response_type=token");
+    }
+  </script>
+</html>
