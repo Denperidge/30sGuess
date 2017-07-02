@@ -39,7 +39,8 @@
     </div>
 
     <div id="body">
-      <p></p>
+      <img id="display_image"/>
+      <h1 id="display_name">Welcome, </h1>
     </div>
 
     <div id="footer">
@@ -47,7 +48,23 @@
     </div>
   </body>
   <script>
-    if (localStorage.getItem("accessToken") == null)
+    localStorage.removeItem("accessToken");
+    var accessToken = localStorage.getItem("accessToken");
+    if (accessToken != null)
+    {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          var user = JSON.parse(xhttp.responseText);
+          document.getElementById("display_name").innerHTML += user.display_name;
+          document.getElementById("display_image").src = user.images.url;
+        }
+      };
+      xhttp.open("GET", "https://api.spotify.com/v1/me", true);
+      xhttp.setRequestHeader("Authorization", "Bearer: " + accessToken);
+      xhttp.send();
+    }
+    else
     {
       document.getElementById("body").innerHTML =
         "<p>Before you can continue, you need to authorize this application " +
@@ -72,7 +89,10 @@
             "https://accounts.spotify.com/authorize" +
             "?client_id=21f9d0d03aa647f8a0ebc10222f9617d" +
             "&redirect_uri=https://stijndotexe.github.io/Minigames-for-Spotify/authorize.html" +
-            "&response_type=token");
+            "&response_type=token" +
+            "&scope=playlist-read-private" +
+                "%20playlist-read-collaborative" +
+                "%20user-library-read");
         }
       document.getElementById("body").appendChild(button);
     }
