@@ -1,9 +1,26 @@
 ﻿<!DOCTYPE html>
 <html>
-  <script>
-  </script>
+<body>
   Authorizing... You will be redirected shortly. If not,
   <a href="https://stijndotexe.github.io/Minigames-for-Spotify/">
     click here!
   </a>
+
+  <script>
+    try
+    {
+      var parameters = window.location.href.split("#")[1].split("&");
+      var accessToken = parameters[0].replace("access_token=", "");
+      window.localStorage.setItem("accessToken", accessToken);
+      window.location.replace("https://stijndotexe.github.io/Minigames-for-Spotify/");
+    }
+    catch (e)
+    {
+      document.body.innerHTML = "Authentication failed! " +
+        "<a href=\"https://stijndotexe.github.io/Minigames-for-Spotify/\">" +
+          "Click here to return to the main page!" +
+        "</a>";
+    }
+  </script>
+</body>
 </html>
