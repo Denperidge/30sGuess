@@ -3,49 +3,9 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!--<link rel="stylesheet" type="text/css" href="stylesheet.css">-->
+    <link rel="stylesheet" type="text/css" href="stylesheet.css">
     <script src="functions.js"></script>
     <style>
-      body
-      {
-        font-family: sans-serif;
-        background-color: #FFFFFF;
-      }
-
-
-      #header
-      {
-        top: 0;
-        left: 0;
-
-        padding: 25px;
-
-        font-size: 50px;
-        font-weight: bold;
-
-        color: #FFFFFF;
-        background-color: #1DB954;
-      }
-
-      #header img
-      {
-        /* The logo and the icon’s exclusion zone is equal to half the height of the icon */
-        margin-left: 25px;
-        height: 50px;
-      }
-
-
-      #logOut
-      {
-        font-size: 11px;
-        text-decoration: underline;
-        text-align: right;
-        float: right;
-        cursor: pointer;
-        cursor: hand;
-      }
-
-
       #display_image
       {
         margin: 0px 25px;
@@ -62,6 +22,38 @@
         margin-left: 50%;
         transform: translateY(-50%) translateX(-50%);
       }
+
+       fieldset
+       {
+         float: left;
+       }
+
+       select
+       {
+         margin: 5px;
+         max-width: 80vw;
+       }
+
+      .box
+      {
+        width: 242px;
+        height: 50px;
+        overflow: auto;
+
+        padding: 5px;
+
+        border: 1px solid #191414;
+
+        cursor: pointer;
+        cursor: hand;
+      }
+
+      .box img
+      {
+        height: 50px;
+        width: auto;
+        margin-right: 5px;
+      }
     </style>
   </head>
   <body>
@@ -70,26 +62,72 @@
       <p id="logOut" onclick="logOut();">Log out</p>
     </div>
 
-    <div id="body">
-
+    <div id="body" style="margin-left:50px">
       <div id="welcome">
         <div id="display_image" style="float:left;"><img/></div>
         <h1 id="display_name">Welcome, </h1>
+      </div>
+      <br>
+      <br>
+      <br>
+      <fieldset>
+        <legend>Saved music:</legend>
+        Albums:
+        <select id="savedAlbums"></select>
+        <button value="savedAlbums" onclick="addSaved(this.value);">Add</button><br>
+
+        Artists:
+        <select id="savedArtists"></select>
+        <button value="savedArtists" onclick="addSaved(this.value);">Add</button><br>
+
+        Playlists:
+        <select id="savedPlaylists"></select>
+        <button value="savedPlaylists" onclick="addSaved(this.value);">Add</button><br>
+
+        Tracks:
+        <select id="savedTracks"></select>
+        <button value="savedTracks" onclick="addSaved(this.value);">Add</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>Search:</legend>
+        <form>
+          <input name="type" value="album" type="radio" onclick="changeSearchType(this);" checked>Album</input><br>
+          <input name="type" value="artist" type="radio" onclick="changeSearchType(this);">Artist</input><br>
+          <input name="type" value="playlist" type="radio" onclick="changeSearchType(this);">Playlist</input><br>
+          <input name="type" value="track" type="radio" onclick="changeSearchType(this);">Track</input><br>
+        </form>
+        <input id="searchQuery" oninput="searchQuery(this);" style="width:250px;" type="text" placeholder="Search for..."/>
+        <div id="queryResults">
+          <!-- Search Results go here! -->
+        </div>
+      </fieldset>
+
+      <br style="clear: both;">
+      <hr>
+
+      <h3>This music will be added in the game:</h3>
+      <div id="selectedQueries">
+      </div>
+
+      <div id="gamemodes">
       </div>
 
     </div>
 
 
     <div id="footer">
+      <b>Developed by <a href="https://github.com/StijnDotExe/">StijnDotExe</a></b>
     </div>
   </body>
+
   <script>
     var accessToken = localStorage.getItem("accessToken");
     if (accessToken != null)
     {
       getJSON("GET", "https://api.spotify.com/v1/me", ["Authorization: Bearer " + accessToken],
       function(json)
-      { // Sucess
+      { // Success
         console.log("Successful user info fetch");
         var user = json;
         if (user.display_name != null) document.getElementById("display_name").innerHTML += user.display_name;
@@ -100,10 +138,12 @@
           document.getElementById("display_name").innerHTML += username;
         }
         document.getElementById("display_image").children[0].src = user.images[0].url;
+
+        getSavedMusic();
       },
       function(json)
       {  // Failure
-        console.log("Failing user info fetch");
+        console.log("Failed user info fetch");
         if (json.error.status == 401)
         {  // Invalid token
           askForAuthentication();
@@ -119,10 +159,158 @@
     }
     else askForAuthentication();
 
+
+    function getSavedMusic()
+    {
+
+      // Albums
+      getJSON("GET", "https://api.spotify.com/v1/me/albums?limit=50", ["Authorization: Bearer " + accessToken],
+        function(json)
+        {  // Success
+          for (var i=0; i < json.items.length; i++)
+          {
+            var option = document.createElement("option");
+            option.json = json.items[i].album;
+            option.text = json.items[i].album.name + " by " + json.items[i].album.artists[0].name;
+            document.getElementById("savedAlbums").add(option);
+          }
+        },
+        function(json){} // Failure
+      );
+
+      // Artists
+      getJSON("GET", "https://api.spotify.com/v1/me/following?type=artist&limit=50", ["Authorization: Bearer " + accessToken],
+        function(json)
+        {  // Success
+          for (var i=0; i < json.artists.items.length; i++)
+          {
+            var option = document.createElement("option");
+            option.json = json.artists.items[i];
+            option.text = json.artists.items[i].name;
+            document.getElementById("savedArtists").add(option);
+          }
+        },
+        function(json){}  // Failure
+      );
+
+      // Playlists
+      getJSON("GET", "https://api.spotify.com/v1/me/playlists?limit=50", ["Authorization: Bearer " + accessToken],
+        function(json)
+        {  // Success
+          for (var i=0; i < json.items.length; i++)
+          {
+            var option = document.createElement("option");
+            option.json = json.items[i];
+            option.text = json.items[i].name;
+            document.getElementById("savedPlaylists").add(option);
+          }
+        },
+        function(json){} // Failure
+      );
+
+      // Tracks
+      getJSON("GET", "https://api.spotify.com/v1/me/tracks?limit=50", ["Authorization: Bearer " + accessToken],
+        function(json)
+        {  // Success
+          console.log(json);
+          for (var i=0; i < json.items.length; i++)
+          {
+            var option = document.createElement("option");
+            option.json = json.items[i].track;
+            option.text = json.items[i].track.name + " by " + json.items[i].track.artists[0].name;
+            document.getElementById("savedTracks").add(option);
+          }
+        },
+        function(json){} // Failure
+      );
+    }
+
+    function addSaved(type)
+    {
+
+      var selectedOption = document.getElementById(type).options[document.getElementById(type).selectedIndex];
+
+      var box = document.createElement("div");
+      box.setAttribute("class", "box");
+      box.id = selectedOption.json.id; // Spotify ID of the object
+
+      try {
+        var image = document.createElement("img");
+        image.src = selectedOption.json.images[0].url;
+        image.style.cssFloat = "left";
+        box.appendChild(image);}
+      catch (e) {}
+
+
+      box.innerHTML += "<b>" + type.slice(5).toLowerCase() + "</b><br>" + selectedOption.json.name;
+      addQuery(box)
+    }
+
+
     function logOut()
     {
       localStorage.removeItem("accessToken");
       location.reload();
+    }
+
+
+    var searchType = "album";
+
+    function changeSearchType(radiobutton)
+    {
+      searchType = radiobutton.value;
+      if (searchType == "album" || searchType == "artist")
+        document.getElementById("searchQuery").placeholder = "Search for an " + searchType;
+      else document.getElementById("searchQuery").placeholder = "Search for a " + searchType;
+    }
+
+    function searchQuery(input)
+    {
+      var accessToken = localStorage.getItem("accessToken");
+      if (input.value == null || input.value == "") { document.getElementById("queryResults").innerHTML = ""; return; }
+      getJSON("GET", "https://api.spotify.com/v1/search?limit=5&type=" + searchType + "&limit=5&q=" + input.value, ["Authorization: Bearer " + accessToken],
+        function(json)
+        {  // Success
+          var results = document.getElementById("queryResults");
+          results.innerHTML = "";
+          var typeKey = searchType + "s";
+          for (var i = 0; i < json[typeKey].items.length; i++)
+          {
+            var box = document.createElement("div");
+            box.setAttribute("class", "box");
+            box.id = json[typeKey].items[i].id; // Spotify ID of the object
+
+            try {
+              var image = document.createElement("img");
+              image.src = json[typeKey].items[i].images[0].url;
+              image.style.cssFloat = "left";
+              box.appendChild(image);
+            }
+            catch (e) {}
+
+
+            box.innerHTML += "<b>" + searchType + "</b><br>" + json[typeKey].items[i].name;
+            results.appendChild(box);
+            box.addEventListener("click", function(e){addQuery(e.target);});
+          }
+        },
+        function(json)
+        {  // Failure
+        }
+      );
+    }
+
+    function addQuery(box)
+    {
+      box.style.display = "inline-block";
+      box.style.margin = "5px";
+      document.getElementById("selectedQueries").appendChild(box);
+      box.addEventListener("click", function(e){removeQuery(e.target);});
+    }
+
+    function removeQuery(box)
+    {
+      document.getElementById("selectedQueries").removeChild(box);
     }
   </script>
 </html>
