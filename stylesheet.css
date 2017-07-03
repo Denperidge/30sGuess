@@ -1,0 +1,60 @@
+body
+{
+  font-family: sans-serif;
+  background-color: #FFFFFF;
+
+  margin: 0;
+}
+
+a:link
+{
+  color: inherit;
+}
+
+a:visited
+{
+  color: inherit;
+}
+
+
+#header
+{
+  padding: 25px;
+
+  font-size: 50px;
+  font-weight: bold;
+
+  color: #FFFFFF;
+  background-color: #1DB954;
+}
+
+#header img
+{
+  /* The logo and the icon’s exclusion zone is equal to half the height of the icon */
+  margin-left: 25px;
+  height: 50px;
+}
+
+
+#logOut
+{
+  font-size: 11px;
+  text-decoration: underline;
+  text-align: right;
+  float: right;
+  cursor: pointer;
+  cursor: hand;
+}
+
+#footer
+{
+  width: 100%;
+
+  position: fixed;
+  bottom: 0px;
+
+  padding: 5px;
+
+  color: white;
+  background-color: #191414;
+}
