@@ -87,7 +87,7 @@
     var accessToken = localStorage.getItem("accessToken");
     if (accessToken != null)
     {
-      getJSON("GET", "https://api.spotify.com/v1/me", ["Authorization: Bearer"] + accessToken,
+      getJSON("GET", "https://api.spotify.com/v1/me", ["Authorization: Bearer" + accessToken],
       function(json)
       { // Sucess
         console.log("Successful user info fetch");
