@@ -13,6 +13,7 @@ function getJSON(method, url, requestHeaders, success, failure)
     for (var i = 0; i < requestHeaders.length; i++)
     {
       var requestHeader = requestHeaders[i].split(":");
+      console.log(requestHeader);
       xhttp.setRequestHeader(requestHeader[0].trim(), requestHeader[1].trim());
     }
   }

@@ -103,7 +103,7 @@
       },
       function(json)
       {  // Failure
-        console.log("Failure user info fetch");
+        console.log("Failing user info fetch");
         if (json.error.status == 401)
         {  // Invalid token
           askForAuthentication();
