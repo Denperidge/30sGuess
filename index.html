@@ -90,6 +90,7 @@
       getJSON("GET", "https://api.spotify.com/v1/me", "Authorization: Bearer" + accessToken,
       function(json)
       { // Sucess
+        console.log("Successful user info fetch");
         var user = json;
         if (user.display_name != null) document.getElementById("display_name").innerHTML += user.display_name;
         else
@@ -102,6 +103,7 @@
       },
       function(json)
       {  // Failure
+        console.log("Failure user info fetch");
         if (json.error.status == 401)
         {  // Invalid token
           askForAuthentication();
