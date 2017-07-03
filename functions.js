@@ -51,7 +51,8 @@ function askForAuthentication()
         "&response_type=token" +
         "&scope=playlist-read-private" +
             "%20playlist-read-collaborative" +
-            "%20user-library-read");
+            "%20user-library-read" +
+            "%20user-follow-read");
     }
   document.getElementById("body").appendChild(button);
 }
