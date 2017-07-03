@@ -44,16 +44,11 @@
         cursor: hand;
       }
 
-      #welcome
-      {
-        padding-left: 25px;
-      }
-      #display_name
-      {
-        padding-left: 25px;
-      }
+
       #display_image
       {
+        margin: 0px 25px;
+
         float: left;
 
         width: 100px;
@@ -88,7 +83,7 @@
     </div>
   </body>
   <script>
-    //localStorage.setItem("accessToken", "debug");
+    localStorage.setItem("accessToken", "debug");
 
     var accessToken = localStorage.getItem("accessToken");
     if (accessToken != null)
