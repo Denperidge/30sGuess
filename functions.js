@@ -8,7 +8,7 @@ function getJSON(method, url, requestHeaders, success, failure)
     else if (this.readyState == 4 && this.status != 200) failure(JSON.parse(xhttp.responseText));
   };
   xhttp.open("GET", url, true);
-  try
+  if (requestHeaders.length > 0)
   {
     for (var i = 0; i < requestHeaders.length; i++)
     {
@@ -17,7 +17,6 @@ function getJSON(method, url, requestHeaders, success, failure)
       xhttp.setRequestHeader(requestHeader[0].trim(), requestHeader[1].trim());
     }
   }
-  catch (e) {}
   xhttp.send();
 }
 
