@@ -11,6 +11,7 @@
         background-color: #FFFFFF;
       }
 
+
       #header
       {
         top: 0;
@@ -31,23 +32,59 @@
         margin-left: 25px;
         height: 50px;
       }
+
+
+      #logOut
+      {
+        font-size: 11px;
+        text-decoration: underline;
+        text-align: right;
+        float: right;
+        cursor: pointer;
+        cursor: hand;
+      }
+
+
+      #display_image
+      {
+        float: left;
+
+        padding: 0px 25px;
+
+        width: 100px;
+        height: 100px;
+        overflow: hidden;
+      }
+      #display_image img
+      {
+        margin-top: 50%;
+        margin-left: 50%;
+        transform: translateY(-50%) translateX(-50%);
+      }
     </style>
   </head>
   <body>
     <div id="header">
       Minigames for <img src="Spotify_Logo_RGB_White.png" alt="Spotify"/>
+      <p id="logOut" onclick="logOut();">Log out</p>
     </div>
 
     <div id="body">
-      <img id="display_image"/>
-      <h1 id="display_name">Welcome, </h1>
+
+      <div id="welcome">
+        <div id="display_image" style="float:left;"><img/></div>
+        <h1 id="display_name">Welcome, </h1>
+      </div>
+
     </div>
 
-    <div id="footer">
 
+    <div id="footer">
     </div>
   </body>
   <script>
+    //localStorage.setItem("accessToken", "debug");
+
     var accessToken = localStorage.getItem("accessToken");
     if (accessToken != null)
     {
@@ -55,8 +92,15 @@
       xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
           var user = JSON.parse(xhttp.responseText);
-          document.getElementById("display_name").innerHTML += user.display_name;
-          document.getElementById("display_image").src = user.images.url;
+          if (user.display_name != null) document.getElementById("display_name").innerHTML += user.display_name;
+          else
+          {
+            var username = user.href.replace("https://api.spotify.com/v1/users/", "");
+            username = username[0].toUpperCase() + username.slice(1);
+            document.getElementById("display_name").innerHTML += username;
+          }
+
+          document.getElementById("display_image").children[0].src = user.images[0].url;
         }
       };
       xhttp.open("GET", "https://api.spotify.com/v1/me", true);
@@ -78,7 +122,7 @@
         "<li>After a while, you may need to authenticate again, because tokens expire after a while.</li>\n" +
         "</ul>\n" +
         "<p>If you have any more questions, please do not hesitate to email " +
-        "me at <a href=\"mailto:stijn.exe@gmail.com?Subject=Questions%20about%20MFS%20Authorization\">stijn.exe@gmail.com</a></p>\n";
+        "me at <a href=\"mailto:stijn.exe@gmail.com?Subject=Questions%20about%20MFS%20Authorization\">stijn.exe@gmail.com</a></p>";
 
       var button = document.createElement("button");
       button.innerHTML = "Authenticate";
@@ -94,6 +138,12 @@
                 "%20user-library-read");
         }
       document.getElementById("body").appendChild(button);
+    }
+
+    function logOut()
+    {
+      localStorage.removeItem("accessToken");
+      location.reload();
     }
   </script>
 </html>
