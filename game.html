@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheet.css">
+    <script src="functions.js"></script>
+    <style></style>
+  </head>
+  <body>
+    <div id="header">
+      Minigames for <img src="Spotify_Logo_RGB_White.png" alt="Spotify"/>
+      <p id="logOut" onclick="logOut();">Log out</p>
+    </div>
+
+    <div id="body" style="margin-left:50px">
+
+    </div>
+
+
+    <div id="footer">
+      <b>Developed by <a href="https://github.com/StijnDotExe/">StijnDotExe</a></b>
+    </div>
+  </body>
+
+  <script>
+    var x = JSON.parse(localStorage.getItem("tracks"));
+    console.log(x);
+  </script>
+</html>

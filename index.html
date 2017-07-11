@@ -110,8 +110,7 @@
       <div id="selectedQueries">
       </div>
 
-      <div id="gamemodes">
-      </div>
+      <button onclick="StartGame();">Start game</button>
 
     </div>
 
@@ -122,6 +121,7 @@
   </body>
 
   <script>
+    var userCountry;  // Needed to search artist top tracks
     var accessToken = localStorage.getItem("accessToken");
     if (accessToken != null)
     {
@@ -139,6 +139,8 @@
         }
         document.getElementById("display_image").children[0].src = user.images[0].url;
 
+        userCountry = user.country;
+        if (userCountry == undefined) userCountry = "US";
         getSavedMusic();
       },
       function(json)
@@ -162,7 +164,6 @@
 
     function getSavedMusic()
     {
-
       // Albums
       getJSON("GET", "https://api.spotify.com/v1/me/albums?limit=50", ["Authorization: Bearer " + accessToken],
         function(json)
@@ -232,7 +233,7 @@
 
       var box = document.createElement("div");
       box.setAttribute("class", "box");
-      box.id = selectedOption.json.id; // Spotify ID of the object
+      box.json = selectedOption.json; // Spotify ID of the object
 
       try {
         var image = document.createElement("img");
@@ -254,7 +255,7 @@
     }
 
 
-    var searchType = "album";
+    var searchType = "album";  // Default setting
 
     function changeSearchType(radiobutton)
     {
@@ -278,7 +279,7 @@
           {
             var box = document.createElement("div");
             box.setAttribute("class", "box");
-            box.id = json[typeKey].items[i].id; // Spotify ID of the object
+            box.json = json[typeKey].items[i]; // Spotify ID of the object
 
             try {
               var image = document.createElement("img");
@@ -311,6 +312,67 @@
     function removeQuery(box)
     {
       document.getElementById("selectedQueries").removeChild(box);
+    }
+
+    function StartGame()
+    {
+      var boxes = document.getElementById("selectedQueries").childNodes;
+      var tracks = [];
+      for (var i=0; i < boxes.length; i++)
+      {
+        var json = boxes[i].json;
+        console.log(json);
+        if (json == undefined) continue;
+
+        if (json.type == "album")
+        {
+          for (var j=0; j<json.tracks.items.length; j++)
+          {
+            tracks.push(json.tracks.items[j]);
+          }
+        }
+
+        else if (json.type == "artist")
+        {
+
+          getJSON("GET", "https://api.spotify.com/v1/artists/" + json.id + "/top-tracks?country=" + userCountry, ["Authorization: Bearer " + accessToken],
+            function(json)
+            {
+              for (var j=0; j < json.tracks.length; j++)
+              {
+                tracks.push(json.tracks[j]);
+              }
+            },
+            function(json)
+            {
+              // Failure
+            });
+        }
+
+        else if (json.type == "playlist")
+        {
+          getJSON("GET", json.tracks.href, ["Authorization: Bearer " + accessToken],
+            function(json)
+            {
+              for (var j=0; j < json.items.length; j++)
+              {
+                tracks.push(json.items[j].track);
+              }
+            },
+            function(json)
+            {
+              // Failure
+            }
+          );
+        }
+
+        else if (json.type == "track")
+        {
+          tracks.push(json);
+        }
+      }
+      localStorage.setItem("tracks", JSON.stringify(tracks));
+      location.assign("game.html");
     }
   </script>
 </html>
