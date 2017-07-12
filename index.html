@@ -176,6 +176,8 @@
             option.text = json.items[i].album.name + " by " + json.items[i].album.artists[0].name;
             document.getElementById("savedAlbums").add(option);
           }
+          $("#savedAlbums").sortOptions();
+          document.getElementById("savedAlbums").selectedIndex = 0;
         },
         function(json){} // Failure
       );
@@ -191,6 +193,8 @@
             option.text = json.artists.items[i].name;
             document.getElementById("savedArtists").add(option);
           }
+          $("#savedArtists").sortOptions();
+          document.getElementById("savedArtists").selectedIndex = 0;
         },
         function(json){}  // Failure
       );
@@ -206,6 +210,8 @@
             option.text = json.items[i].name;
             document.getElementById("savedPlaylists").add(option);
           }
+          $("#savedPlaylists").sortOptions();
+          document.getElementById("savedPlaylists").selectedIndex = 0;
         },
         function(json){} // Failure
       );
@@ -222,6 +228,8 @@
             option.text = json.items[i].track.name + " by " + json.items[i].track.artists[0].name;
             document.getElementById("savedTracks").add(option);
           }
+          $("#savedTracks").sortOptions();
+          document.getElementById("savedTracks").selectedIndex = 0;
         },
         function(json){} // Failure
       );
