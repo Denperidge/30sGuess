@@ -38,7 +38,7 @@
     <div id="body" style="margin-left:50px">
       <br><br><br>
       <div id="timer">
-        <b>Time until new round...</b>
+        <b id="timerTitle"></b>
         <p id="time"></p>
       </div>
 
@@ -47,7 +47,7 @@
         <select id="names"></select>
         by
         <select id="artists"></select>
-        <button>Submit!</button>
+        <button onclick="Submit();">Submit!</button>
       </fieldset>
     </div>
 
@@ -58,37 +58,58 @@
   </body>
 
   <script>
+    // [START] External functions (not made by me)
     function optionExists(val, id) {
         return $("#" + id + " option").filter(function() {
            return this.value === val;
          }).length !== 0;
     }
 
+    function rng(min, max) {
+      return Math.floor(Math.random() * (max - min) ) + min;
+    }
+    // [END] External functions
+
     var countdown;
 
     function CountDown()
     {
+      document.getElementById("timerTitle").innerHTML = "Time until new round...";
       var time = document.getElementById("time");
       time.innerHTML = 3;
       countdown = setInterval(
         function()
         {
           time.innerHTML = parseInt(time.innerHTML) - 1;
-          if (parseInt(time.innerHTML) <= 1) StartRound();
+          if (parseInt(time.innerHTML) <= 0) StartRound();
         }, 1000);
     }
+
+    var currentName;
+    var currentArtists;
+    var currentAudio;
 
     function StartRound()
     {
       clearInterval(countdown);
-
+      var currentIndex = rng(0, tracks.length);
+      var currentTrack = tracks[currentIndex];
+      currentName = currentTrack.name;
+      currentArtists = [];
+      for (var i = 0; i < currentTrack.artists.length; i++)
+      {
+        currentArtists.push(currentTrack.artists[i].name);
+      }
+      document.getElementById("timerTitle").innerHTML = "Guess the song that is currently playing!";
+      currentAudio = new Audio(currentTrack.preview_url);
+      currentAudio.play();
     }
 
     var tracks = JSON.parse(localStorage.getItem("tracks"));
     console.log(tracks);
 
-    names = document.getElementById("names");
-    artists = document.getElementById("artists");
+    var names = document.getElementById("names");
+    var artists = document.getElementById("artists");
     for (var i = 0; i < tracks.length; i++)
     {
       if (!optionExists(tracks[i].name, "names"))
@@ -107,8 +128,34 @@
           artists.add(artistOption);
         }
       }
+    }
 
+    function Submit()
+    {
+      if (!currentAudio.paused)
+      {
+        var correctName = false;;
+        var correctArtist = false;
 
+        if (names[names.selectedIndex].text == currentName)
+        {
+          correctName = true;
+          document.getElementById("timerTitle").innerHTML = "Correct name, ";
+        }
+        else {
+          document.getElementById("timerTitle").innerHTML = "Incorrect name, ";
+        }
+
+        if ($.inArray(artists[artists.selectedIndex].text, currentArtists) != -1)
+        {
+          correctArtist = true;
+          document.getElementById("timerTitle").innerHTML += "correct artist!";
+        }
+        else {
+          document.getElementById("timerTitle").innerHTML += "incorrect artist!";
+        }
+        // TODO points
+      }
     }
 
     CountDown();
