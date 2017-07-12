@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="stylesheet.css">
+    <script src="jquery-3.2.1.min.js"></script>
     <script src="functions.js"></script>
     <style>
       #display_image
@@ -317,7 +318,9 @@
     function StartGame()
     {
       var boxes = document.getElementById("selectedQueries").childNodes;
-      var tracks = [];
+      var tracklist = [];
+      var timeout;
+
       for (var i=0; i < boxes.length; i++)
       {
         var json = boxes[i].json;
@@ -328,25 +331,25 @@
         {
           for (var j=0; j<json.tracks.items.length; j++)
           {
-            tracks.push(json.tracks.items[j]);
+            tracklist.push(json.tracks.items[j]);
           }
         }
 
         else if (json.type == "artist")
         {
-
           getJSON("GET", "https://api.spotify.com/v1/artists/" + json.id + "/top-tracks?country=" + userCountry, ["Authorization: Bearer " + accessToken],
             function(json)
             {
               for (var j=0; j < json.tracks.length; j++)
               {
-                tracks.push(json.tracks[j]);
+                tracklist.push(json.tracks[j]);
               }
             },
             function(json)
             {
               // Failure
             });
+
         }
 
         else if (json.type == "playlist")
@@ -356,7 +359,7 @@
             {
               for (var j=0; j < json.items.length; j++)
               {
-                tracks.push(json.items[j].track);
+                tracklist.push(json.items[j].track);
               }
             },
             function(json)
@@ -368,11 +371,18 @@
 
         else if (json.type == "track")
         {
-          tracks.push(json);
+          tracklist.push(json);
         }
+
+        // All tracks aren't loaded in instantly due to the async calls. Hence a small delay!
+        clearTimeout(timeout);
+        timeout = setTimeout(function()
+          {
+            console.log(tracklist);
+            localStorage.setItem("tracks", JSON.stringify(tracklist));
+            location.assign("game.html");
+          }, 1000);
       }
-      localStorage.setItem("tracks", JSON.stringify(tracks));
-      location.assign("game.html");
     }
   </script>
 </html>
