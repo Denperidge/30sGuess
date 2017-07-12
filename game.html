@@ -4,8 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="stylesheet.css">
+    <script src="jquery-3.2.1.min.js"></script>
     <script src="functions.js"></script>
-    <style></style>
+    <style>
+      #timer
+      {
+        width: 200px;
+        margin: auto;
+
+        padding: 25px;
+
+        border: 1px solid #191414;
+
+        color: #FFFFFF;
+        text-align: center;
+        font-size: 18px;
+
+        background-color: #1DB954;
+      }
+
+      #time
+      {
+        font-size: 50px;
+      }
+    </style>
   </head>
   <body>
     <div id="header">
@@ -14,7 +36,19 @@
     </div>
 
     <div id="body" style="margin-left:50px">
+      <br><br><br>
+      <div id="timer">
+        <b>Time until new round...</b>
+        <p id="time"></p>
+      </div>
 
+      <fieldset id="answer">
+        <legend>Answer</legend>
+        <select id="names"></select>
+        by
+        <select id="artists"></select>
+        <button>Submit!</button>
+      </fieldset>
     </div>
 
 
@@ -24,7 +58,59 @@
   </body>
 
   <script>
-    var x = JSON.parse(localStorage.getItem("tracks"));
-    console.log(x);
+    function optionExists(val, id) {
+        return $("#" + id + " option").filter(function() {
+           return this.value === val;
+         }).length !== 0;
+    }
+
+    var countdown;
+
+    function CountDown()
+    {
+      var time = document.getElementById("time");
+      time.innerHTML = 3;
+      countdown = setInterval(
+        function()
+        {
+          time.innerHTML = parseInt(time.innerHTML) - 1;
+          if (parseInt(time.innerHTML) <= 1) StartRound();
+        }, 1000);
+    }
+
+    function StartRound()
+    {
+      clearInterval(countdown);
+
+    }
+
+    var tracks = JSON.parse(localStorage.getItem("tracks"));
+    console.log(tracks);
+
+    names = document.getElementById("names");
+    artists = document.getElementById("artists");
+    for (var i = 0; i < tracks.length; i++)
+    {
+      if (!optionExists(tracks[i].name, "names"))
+      {
+        var nameOption = document.createElement("option");
+        nameOption.text = tracks[i].name;
+        names.add(nameOption);
+      }
+
+      for (var j = 0; j < tracks[i].artists.length; j++)
+      {
+        if (!optionExists(tracks[i].artists[j].name, "artists"))
+        {
+          var artistOption = document.createElement("option");
+          artistOption.text = tracks[i].artists[j].name;
+          artists.add(artistOption);
+        }
+      }
+
+
+    }
+
+    CountDown();
   </script>
 </html>
