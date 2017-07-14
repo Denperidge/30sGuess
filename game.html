@@ -35,6 +35,12 @@
 
         padding: 10px;
       }
+
+      .clickable
+      {
+        cursor: pointer;
+        cursor: hand;
+      }
     </style>
   </head>
   <body>
@@ -92,9 +98,19 @@
 
     var countdown;
 
-    function CountDown()
+    function SetUpForNewRound()
     {
       document.getElementById("vol-control").value = localStorage.getItem("volume");
+      document.getElementById("timerTitle").innerHTML = "Click here to start a new round!";
+      document.getElementById("timer").setAttribute("class", "clickable");
+      document.getElementById("timer").addEventListener("click", CountDown);
+    }
+
+
+    function CountDown()
+    {
+      document.getElementById("timer").removeEventListener("click", CountDown);
+      document.getElementById("timer").setAttribute("class", null);
       document.getElementById("timerTitle").innerHTML = "Time until new round...";
       var time = document.getElementById("time");
       time.innerHTML = 3;
@@ -125,11 +141,22 @@
       currentAudio = new Audio(currentTrack.preview_url);
       SetVolume(document.getElementById("vol-control").value);
       currentAudio.play();
+      StartTimer();
     }
 
-    function DecreaseScore()
+    var timer;
+    function StartTimer()
     {
-
+      var time = document.getElementById("time");
+      var timerbg = document.getElementById("timer");  // TimerBackGround
+      time.innerHTML = 30;
+      timer = setInterval(
+        function(){
+          time.innerHTML = parseInt(time.innerHTML) - 1;
+          if (parseInt(time.innerHTML) < 20) timerbg.style.backgroundColor = "orange";
+          if (parseInt(time.innerHTML) < 10) timerbg.style.backgroundColor = "red";
+          if (time.innerHTML == 0) clearInterval(timer);
+        }, 1000);
     }
 
     function Submit()
@@ -161,6 +188,7 @@
         {
           currentAudio.pause();
           CountDown();
+          clearInterval(timer);
         }
       }
     }
@@ -190,6 +218,6 @@
       }
     }
 
-    CountDown();
+    SetUpForNewRound();
   </script>
 </html>
