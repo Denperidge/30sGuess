@@ -138,7 +138,7 @@
         currentArtists.push(currentTrack.artists[i].name);
       }
       document.getElementById("timerTitle").innerHTML = "Guess the song that is currently playing!";
-      currentAudio = new Audio(currentTrack.preview_url);
+      currentAudio = new Video(currentTrack.preview_url);
       SetVolume(document.getElementById("vol-control").value);
       currentAudio.play();
       StartTimer();
