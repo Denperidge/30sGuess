@@ -41,6 +41,11 @@
         cursor: pointer;
         cursor: hand;
       }
+
+      .floatLeft
+      {
+        float: left;
+      }
     </style>
   </head>
   <body>
@@ -57,12 +62,13 @@
       </div>
 
       <fieldset id="answer">
-        <legend>Answer</legend>
         <select id="names"></select>
         by
         <select id="artists"></select>
         <button onclick="Submit();">Submit!</button>
         <input id="vol-control" type="range" min="0" max="100" step="1" oninput="SetVolume(this.value)" onchange="SetVolume(this.value)"></input>
+        <br>
+        <p style="font-weight: bold;" class="floatLeft">Score: </p><p class="floatLeft" id="score">0</p><p class="floatLeft">/</p><p class="floatLeft" id="maxScore">0</p>
       </fieldset>
     </div>
 
@@ -98,7 +104,7 @@
 
     var countdown;
 
-    function SetUpForNewRound()
+    function SetUpForNewGame()
     {
       document.getElementById("vol-control").value = localStorage.getItem("volume");
       document.getElementById("timerTitle").innerHTML = "Click here to start a new round!";
@@ -109,8 +115,11 @@
 
     function CountDown()
     {
+      pointsName = 0;
+      pointsArtist = 0;
       document.getElementById("timer").removeEventListener("click", CountDown);
       document.getElementById("timer").setAttribute("class", null);
+      document.getElementById("timer").style.backgroundColor = "#1DB954";
       document.getElementById("timerTitle").innerHTML = "Time until new round...";
       var time = document.getElementById("time");
       time.innerHTML = 3;
@@ -126,6 +135,9 @@
     var currentArtists;
     var currentAudio;
 
+    var pointsName;
+    var pointsArtist;
+
     function StartRound()
     {
       clearInterval(countdown);
@@ -133,6 +145,7 @@
       var currentTrack = tracks[currentIndex];
       currentName = currentTrack.name;
       currentArtists = [];
+      tracks.splice(currentIndex, 1);
       for (var i = 0; i < currentTrack.artists.length; i++)
       {
         currentArtists.push(currentTrack.artists[i].name);
@@ -143,11 +156,11 @@
       currentAudio.src = currentTrack.preview_url;
       SetVolume(document.getElementById("vol-control").value);
       currentAudio.play();
-      StartTimer();
+      StartGame();
     }
 
     var timer;
-    function StartTimer()
+    function StartGame()
     {
       var time = document.getElementById("time");
       var timerbg = document.getElementById("timer");  // TimerBackGround
@@ -155,9 +168,14 @@
       timer = setInterval(
         function(){
           time.innerHTML = parseInt(time.innerHTML) - 1;
-          if (parseInt(time.innerHTML) < 20) timerbg.style.backgroundColor = "orange";
-          if (parseInt(time.innerHTML) < 10) timerbg.style.backgroundColor = "red";
-          if (time.innerHTML == 0) clearInterval(timer);
+          if (parseInt(time.innerHTML) < 21) timerbg.style.backgroundColor = "orange";
+          if (parseInt(time.innerHTML) < 11) timerbg.style.backgroundColor = "red";
+          if (time.innerHTML == 0)
+          {
+            clearInterval(timer);
+            document.getElementById("timerTitle").innerHTML = "Out of time!<br>Awarded points:";
+            AwardPoints();
+          }
         }, 1000);
     }
 
@@ -165,38 +183,79 @@
     {
       if (!currentAudio.paused)
       {
-        var correctName = false;;
-        var correctArtist = false;
+        var time = document.getElementById("time");
 
         if (names[names.selectedIndex].text == currentName)
-        {
-          correctName = true;
+        {  // If correct name
           document.getElementById("timerTitle").innerHTML = "Correct name, ";
+          if (pointsName == 0)
+          {  // If name points have not been yet awarded
+            pointsName = CalculatePoints();
+          }
         }
         else {
           document.getElementById("timerTitle").innerHTML = "Incorrect name, ";
+          time.innerHTML = parseInt(time.innerHTML) - 5;
         }
 
         if ($.inArray(artists[artists.selectedIndex].text, currentArtists) != -1)
         {
-          correctArtist = true;
           document.getElementById("timerTitle").innerHTML += "correct artist!";
+          if (pointsArtist == 0)
+          {
+            pointsArtist = CalculatePoints();
+          }
         }
         else {
           document.getElementById("timerTitle").innerHTML += "incorrect artist!";
+          time.innerHTML = parseInt(time.innerHTML) - 5;
         }
 
-        if (correctName && correctArtist)
-        {
+        if (parseInt(time.innerHTML) < 0) time.innerHTML = 1;
+
+        if (pointsName != 0 && pointsArtist != 0)
+        {  // If both name and artist are correctly guessed
           currentAudio.pause();
-          CountDown();
           clearInterval(timer);
+          document.getElementById("timerTitle").innerHTML += "<br>Awarded points:";
+          AwardPoints();
         }
       }
     }
 
+    function CalculatePoints()
+    {  // Calcualate points depending on how much time is left
+      var pointsCategory;
+      var bgColor = document.getElementById("timer").style.backgroundColor;
+      // If guessed in 10 seconds, award 5 points (rgb code for Spotify Green)
+      if (bgColor == "rgb(29, 185, 84)")  pointsCategory = 5;
+
+      // If guessed in 20, award 2.5 points
+      else if (bgColor == "orange") pointsCategory = 2.5;
+
+      // If guessed in 30, award 1 point;
+      else if (bgColor == "red") pointsCategory = 1;
+
+      return pointsCategory;
+    }
+
+    function AwardPoints()
+    {
+      currentAudio.pause();
+      console.log(pointsName);
+      console.log(pointsArtist);
+      var score = pointsName + pointsArtist;
+      console.log(score);
+      document.getElementById("time").innerHTML = score;
+      document.getElementById("score").innerHTML =
+        parseFloat(document.getElementById("score").innerHTML) + score;
+      document.getElementById("maxScore").innerHTML =
+        parseFloat(document.getElementById("maxScore").innerHTML) + 10;
+      setTimeout(CountDown, 3000);
+
+    }
+
     var tracks = JSON.parse(localStorage.getItem("tracks"));
-    console.log(tracks);
 
     var names = document.getElementById("names");
     var artists = document.getElementById("artists");
@@ -220,6 +279,6 @@
       }
     }
 
-    SetUpForNewRound();
+    SetUpForNewGame();
   </script>
 </html>
