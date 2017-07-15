@@ -38,7 +38,7 @@ function askForAuthentication()
          "The authentication lasts until you explicitly take it away in your <a href=\"https://www.spotify.com/account/apps/\">Spotify settings.</a></li>\n"
     "</ul>\n" +
     "<p>If you have any more questions, please do not hesitate to email " +
-    "me at <a href=\"mailto:stijn.exe@gmail.com?Subject=Questions%20about%20MFS%20Authorization\">stijn.exe@gmail.com</a></p>";
+    "me at <a href=\"mailto:stijn.exe@gmail.com?Subject=Questions%20about%2030sGuess%20Authorization\">stijn.exe@gmail.com</a></p>";
 
   var button = document.createElement("button");
   button.innerHTML = "Authenticate";
@@ -47,7 +47,7 @@ function askForAuthentication()
       window.location.replace(
         "https://accounts.spotify.com/authorize" +
         "?client_id=21f9d0d03aa647f8a0ebc10222f9617d" +
-        "&redirect_uri=https://stijndotexe.github.io/Minigames-for-Spotify/authorize.html" +
+        "&redirect_uri=https://stijndotexe.github.io/30sGuess/authorize.html" +
         "&response_type=token" +
         "&scope=playlist-read-private" +
             "%20playlist-read-collaborative" +
