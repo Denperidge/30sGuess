@@ -337,9 +337,28 @@
 
         if (json.type == "album")
         {
-          for (var j=0; j<json.tracks.items.length; j++)
+          if (json.tracks != undefined)  // If tacks are inside of the json
           {
-            tracklist.push(json.tracks.items[j]);
+            for (var j=0; j<json.tracks.items.length; j++)
+            {
+              tracklist.push(json.tracks.items[j]);
+            }
+          }
+          else
+          {  // If not
+            getJSON("GET", "https://api.spotify.com/v1/albums/" + json.id + "/tracks?limit=50", ["Authorization: Bearer " + accessToken],
+              function(json)
+              {
+                console.log(json);
+                for (var j=0; j<json.items.length; j++)
+                {
+                  tracklist.push(json.items[j]);
+                }
+              },
+              function(json)
+              {
+                // Failure
+              });
           }
         }
 
