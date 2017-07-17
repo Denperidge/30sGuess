@@ -1,3 +1,23 @@
+// Make bottom bar follow the application if scrollable, otherwise lock
+$(document).ready(function() {
+  setFooter();
+  $(window).on('resize', function(e) {
+    setFooter();
+  });
+});
+
+function setFooter()
+{
+  if ($("body").height() > $(window).height())
+  {
+    document.getElementById("footer").style.position = "static";
+  }
+  else
+  {
+    document.getElementById("footer").style.position = "absolute";
+  }
+}
+
 function getJSON(method, url, requestHeaders, success, failure)
 {
   var xhttp = new XMLHttpRequest();
