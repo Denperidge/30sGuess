@@ -9,7 +9,8 @@
     <style>
       #timer
       {
-        width: 200px;
+        width: 20vw;
+        height: 20vw;
         margin: auto;
 
         padding: 25px;
@@ -18,14 +19,14 @@
 
         color: #FFFFFF;
         text-align: center;
-        font-size: 18px;
+        font-size: 2vw;
 
         background-color: #1DB954;
       }
 
       #time
       {
-        font-size: 50px;
+        font-size: 6vw;
       }
 
       fieldset
@@ -60,12 +61,14 @@
         <b id="timerTitle"></b>
         <p id="time"></p>
       </div>
-
+      <br>
       <fieldset id="answer">
         <select id="names"></select>
         by
         <select id="artists"></select>
         <button onclick="Submit();">Submit!</button>
+        <br>
+        Volume:
         <input id="vol-control" type="range" min="0" max="100" step="1" oninput="SetVolume(this.value)" onchange="SetVolume(this.value)"></input>
         <br>
         <p style="font-weight: bold;" class="floatLeft">Score: </p><p class="floatLeft" id="score">0</p><p class="floatLeft">/</p><p class="floatLeft" id="maxScore">0</p>
