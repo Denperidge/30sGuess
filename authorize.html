@@ -2,7 +2,7 @@
 <html>
 <body>
   Authorizing... You will be redirected shortly. If not,
-  <a href="https://stijndotexe.github.io/30sGuess/">
+  <a href="/30sGuess/">
     click here!
   </a>
 
@@ -12,12 +12,12 @@
       var parameters = window.location.href.split("#")[1].split("&");
       var accessToken = parameters[0].replace("access_token=", "");
       window.localStorage.setItem("accessToken", accessToken);
-      window.location.replace("https://stijndotexe.github.io/30sGuess/");
+      window.location.replace("/30sGuess/");
     }
     catch (e)
     {
       document.body.innerHTML = "Authentication failed! " +
-        "<a href=\"https://stijndotexe.github.io/30sGuess/\">" +
+        "<a href=\"/30sGuess/\">" +
           "Click here to return to the main page!" +
         "</a>";
     }

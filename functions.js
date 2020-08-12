@@ -67,7 +67,7 @@ function askForAuthentication()
       window.location.replace(
         "https://accounts.spotify.com/authorize" +
         "?client_id=21f9d0d03aa647f8a0ebc10222f9617d" +
-        "&redirect_uri=https://stijndotexe.github.io/30sGuess/authorize.html" +
+        "&redirect_uri=https://denperidge.github.io/30sGuess/authorize.html" +
         "&response_type=token" +
         "&scope=playlist-read-private" +
             "%20playlist-read-collaborative" +
